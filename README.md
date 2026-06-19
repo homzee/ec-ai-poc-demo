@@ -1,38 +1,11 @@
-# EC自動分析PoCシステム（フェーズ1対応）
+# 中亚 / Ozon 电商 AI 落地 Demo
 
-本リポジトリは、Slackを起点としたAIドリブンEC分析PoCの構築成果物です。  
-クラウドワークス掲載案件「Googleスプレッドシート連携 + AI施策提案 + Slack承認実装」に準拠しています。
+公开演示地址：
 
-## ✅ 主な機能
+https://homzee.github.io/ec-ai-poc-demo/
 
-- Google SheetsのKPIデータ自動取得（OAuth認証）
-- OpenAI GPT-3.5によるROIスコアリングと施策提案
-- Slackへ要約 + 承認ボタン投稿
-- /approve, /reject エンドポイントでワンクリック実装可能
-- Markdownログ自動保存（logs/）
-- Windows用batファイル付き：run_daily.bat
+这是一个面向中亚与俄语区电商客户的 AI 落地 Demo，用于展示 SKU 利润测算、风险评分、俄语 Listing、图片合规检查、驳回处理、客服草稿、海外仓补货、智能定价和业务流程。
 
-## 🚀 エンドポイント構成（FastAPI）
+## 演示定位
 
-| メソッド | パス | 説明 |
-|----------|------|------|
-| GET | `/` | サーバ稼働確認 |
-| POST | `/trigger` | 分析+Slack送信 |
-| POST | `/approve` | ユーザーが承認した際の処理 |
-| POST | `/reject` | ユーザーが却下した際の処理 |
-
-## 🐳 Docker利用方法
-
-```bash
-docker build -t slack-approver .
-docker run -d -p 8000:8000 --env-file .env slack-approver
-```
-
-## 📎 必要な環境変数（.env）
-
-```dotenv
-OPENAI_API_KEY=sk-xxxxx
-SLACK_WEBHOOK_URL=https://hooks.slack.com/services/xxxx
-SLACK_APPROVAL_URL=http://localhost:8000
-GOOGLE_SHEET_ID=スプレッドシートID
-```
+第一期 PoC 先验证辅助决策与资料生成，不直接自动上架，不自动回复真实客户。后续可接入 Ozon/Kaspi API、Ollama/Qwen 本地模型、知识库、n8n 编排与通知审批。
