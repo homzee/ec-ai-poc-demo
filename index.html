@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>中亚 / Ozon 电商 AI 落地 Demo</title>
+  <style>
+    :root { --bg:#f5f7fa; --panel:#fff; --text:#172033; --muted:#667085; --line:#d9e0ea; --blue:#2563eb; --green:#15803d; --amber:#b45309; --red:#b91c1c; --dark:#101828; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Arial,"Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); }
+    header { background:var(--dark); color:white; padding:30px 34px; }
+    header h1 { margin:0 0 8px; font-size:30px; }
+    header p { margin:0; color:#cbd5e1; max-width:980px; line-height:1.7; }
+    nav { position:sticky; top:0; z-index:5; display:flex; gap:8px; flex-wrap:wrap; padding:12px 22px; background:rgba(245,247,250,.96); border-bottom:1px solid var(--line); }
+    nav a { color:var(--blue); background:white; border:1px solid var(--line); padding:8px 10px; border-radius:6px; text-decoration:none; font-size:14px; }
+    main { max-width:1240px; margin:0 auto; padding:26px 22px 56px; }
+    section { margin:0 0 26px; scroll-margin-top:74px; }
+    h2 { font-size:21px; margin:0 0 12px; }
+    h3 { margin:8px 0; }
+    .summary,.grid,.two-col { display:grid; gap:14px; }
+    .summary { grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); }
+    .grid { grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); }
+    .two-col { grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); }
+    .box,.panel,.card,.step { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:16px; }
+    .box b { display:block; font-size:23px; margin-bottom:4px; }
+    .meta,.box span { color:var(--muted); font-size:13px; line-height:1.6; }
+    .callout { border-left:4px solid var(--blue); }
+    .pill { display:inline-block; border:1px solid var(--line); border-radius:999px; padding:4px 9px; background:#f8fafc; font-size:13px; margin:2px 4px 2px 0; }
+    table { width:100%; border-collapse:collapse; background:white; border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+    th,td { border-bottom:1px solid var(--line); padding:10px; text-align:left; vertical-align:top; }
+    th { background:#f8fafc; color:#475467; font-size:13px; }
+    .score { font-size:22px; font-weight:700; }
+    .grade-a { color:var(--green); } .grade-b { color:var(--blue); } .grade-c { color:var(--amber); }
+    .app-shell { overflow:hidden; }
+    .login-screen { display:grid; grid-template-columns:1fr 1fr; min-height:360px; }
+    .login-hero { background:#101828; color:white; padding:34px; }
+    .login-form { padding:34px; }
+    input { width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:8px; margin:8px 0 14px; }
+    button { border:0; border-radius:8px; padding:11px 14px; background:var(--blue); color:white; font-weight:700; cursor:pointer; }
+    .merchant-ui { display:none; grid-template-columns:220px 1fr; min-height:430px; }
+    .sidebar { background:#101828; color:white; padding:20px; }
+    .side-link { display:block; color:#cbd5e1; padding:10px 12px; border-radius:8px; margin-bottom:6px; cursor:pointer; }
+    .side-link.active,.side-link:hover { background:#1d2939; color:white; }
+    .app-main { padding:20px; }
+    .app-view { display:none; } .app-view.active { display:block; }
+    .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:16px; }
+    .kpi { background:white; border:1px solid var(--line); border-radius:8px; padding:14px; }
+    @media (max-width:760px) { header{padding:24px 20px}.login-screen,.merchant-ui{grid-template-columns:1fr}.sidebar{display:flex;overflow-x:auto;gap:8px}.side-link{white-space:nowrap} }
+  </style>
+</head>
+<body>
+<header>
+  <h1>中亚 / Ozon 电商 AI 落地 Demo</h1>
+  <p>面向中亚与俄语区电商的客户演示 Demo：把 1688 中文商品资料转换成 Ozon 上架辅助资料包，覆盖 SKU 利润测算、风险评分、俄语 Listing、图片合规、驳回处理、客服草稿、补货和调价建议。</p>
+</header>
+<nav>
+  <a href="#overview">总览</a><a href="#prototype">产品原型</a><a href="#discovery">选品挖掘</a><a href="#sku">SKU 分析</a><a href="#detail">详情页生成</a><a href="#ops">运营能力</a><a href="#workflow">业务流程</a><a href="#deploy">本地部署</a><a href="#todo">开发 To-do</a>
+</nav>
+<main>
+  <section id="overview">
+    <h2>Demo 总览</h2>
+    <div class="summary">
+      <div class="box"><b>5</b><span>示例 SKU</span></div>
+      <div class="box"><b>A: 3 / B: 2</b><span>评分分布</span></div>
+      <div class="box"><b>8 个</b><span>实际功能展示</span></div>
+      <div class="box"><b>本地优先</b><span>Ollama / Qwen 可接入</span></div>
+    </div>
+  </section>
+  <section class="panel callout">
+    <h2>演示定位</h2>
+    <p>当前 Demo 对应《中亚电商 AI 落地方案》第一期 PoC：先验证 SKU 分析、俄语 Listing、图片合规、驳回处理、客服草稿、补货和调价建议，不直接自动上架，不自动回复真实客户。</p>
+  </section>
+  <section id="prototype">
+    <h2>产品原型</h2>
+    <div class="panel app-shell">
+      <div id="loginScreen" class="login-screen">
+        <div class="login-hero"><h2>AI 跨境店铺运营台</h2><p>统一管理库存、商品上架、详情页、客服草稿和运营建议。</p></div>
+        <div class="login-form"><h2>商家登录</h2><label>账号</label><input value="demo@merchant.ai"><label>密码</label><input value="demo123456" type="password"><button onclick="showMerchantApp()">进入工作台</button><p class="meta">演示账号，无真实认证。</p></div>
+      </div>
+      <div id="merchantUi" class="merchant-ui">
+        <aside class="sidebar"><h3>Merchant AI</h3><a class="side-link active" onclick="switchAppView('dashboard',this)">总览</a><a class="side-link" onclick="switchAppView('inventory',this)">库存</a><a class="side-link" onclick="switchAppView('store',this)">店铺</a><a class="side-link" onclick="switchAppView('ai',this)">AI 任务</a><a class="side-link" onclick="switchAppView('mobile',this)">手机端</a></aside>
+        <div class="app-main">
+          <div id="dashboard" class="app-view active"><h2>Ozon 跨境店 · 演示工作台</h2><div class="kpi-grid"><div class="kpi"><b>5</b><span class="meta">在管 SKU</span></div><div class="kpi"><b>3</b><span class="meta">优先测试</span></div><div class="kpi"><b>2</b><span class="meta">需人工复核</span></div><div class="kpi"><b>1</b><span class="meta">待补货提醒</span></div></div></div>
+          <div id="inventory" class="app-view"><h2>库存管理</h2><table><tr><th>SKU</th><th>商品</th><th>库存</th><th>动作</th></tr><tr><td>BEAUTY-005-01</td><td>便携卷发棒</td><td>42</td><td>进入补货观察</td></tr><tr><td>HOME-001-02</td><td>厨房收纳架</td><td>118</td><td>继续测试</td></tr></table></div>
+          <div id="store" class="app-view"><h2>店铺信息</h2><div class="grid"><div class="card"><h3>Ozon 跨境店</h3><p>状态：试运营；模式：r-FBS</p></div><div class="card"><h3>Kaspi</h3><p>状态：后续扩展；目标：哈萨克斯坦市场</p></div></div></div>
+          <div id="ai" class="app-view"><h2>AI 任务队列</h2><div class="grid"><div class="card"><h3>详情页生成</h3><p>5 个 SKU 已生成平台化字段包。</p></div><div class="card"><h3>驳回分析</h3><p>检测水印/文字风险，建议重新处理图片。</p></div></div></div>
+          <div id="mobile" class="app-view"><h2>手机端展示</h2><div class="card"><strong>今日库存提醒</strong><br><span class="meta">BEAUTY-005-01 进入补货观察</span></div><button onclick="location.href='#sku'">查看 SKU 列表</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="discovery"><h2>选品挖掘</h2><div class="grid"><article class="card"><div class="meta">Ozon · 家居收纳</div><h3>厨房多层收纳架</h3><p>抓取热销线索、评论痛点、供应链候选链接，输出机会评分和建议动作。</p><span class="pill">评论痛点</span><span class="pill">1688 匹配</span><span class="pill">机会评分 88</span></article><article class="card"><div class="meta">Kaspi · 美妆个护</div><h3>便携卷发棒</h3><p>匹配中亚市场价格带，结合成本、物流和佣金做利润测算。</p><span class="pill">高毛利</span><span class="pill">需图片合规</span></article></div></section>
+  <section id="sku"><h2>SKU 分析</h2><div class="grid"><article class="card"><h3>厨房收纳架</h3><div class="score grade-a">A / 91</div><p>建议优先测试；利润 620 RUB，利润率 31.4%。</p><p><strong>俄语标题：</strong>Кухонный органайзер многоуровневый</p></article><article class="card"><h3>便携卷发棒</h3><div class="score grade-b">B / 78</div><p>可测试但需复核图片合规；注意插头规格和售后风险。</p><p><strong>俄语标题：</strong>Портативная плойка для волос</p></article></div></section>
+  <section id="detail"><h2>详情页生成</h2><div class="two-col"><div class="panel"><h3>平台字段包</h3><p>标题、短描述、长描述、Rich-content 区块、属性字段、图片顺序、条码规则。</p></div><div class="panel"><h3>自检规则</h3><p>检查俄语标题长度、禁用词、图片水印、主图背景、尺寸和类目属性完整度。</p></div></div></section>
+  <section id="ops"><h2>运营能力</h2><div class="grid"><article class="card"><h3>驳回处理</h3><p>识别俄语驳回原因，定位后台板块并给出修改建议。</p></article><article class="card"><h3>客服草稿</h3><p>俄语买家消息分类、回复草稿、是否转人工判断。</p></article><article class="card"><h3>海外仓补货</h3><p>按库存、日销、可售天数输出补货建议。</p></article><article class="card"><h3>智能定价</h3><p>结合竞品价、保底价和人工确认规则输出建议价。</p></article></div></section>
+  <section id="workflow"><h2>业务流程</h2><div class="grid"><div class="step"><h3>1. 商品资料</h3><p>1688/义乌购/客户表格输入。</p></div><div class="step"><h3>2. AI 分析</h3><p>利润、风险、Listing、合规检查。</p></div><div class="step"><h3>3. 人工审核</h3><p>关键动作保留人工确认。</p></div><div class="step"><h3>4. 平台执行</h3><p>后续可接 Ozon/Kaspi API。</p></div></div></section>
+  <section id="deploy"><h2>本地部署</h2><div class="panel"><p><strong>本地 Demo：</strong>Python 静态服务，默认端口 8765。</p><p><strong>后续扩展：</strong>Ollama/Qwen 本地模型、Qdrant/Chroma 知识库、n8n 编排、Slack/飞书/Telegram 通知。</p></div></section>
+  <section id="todo"><h2>开发 To-do</h2><table><thead><tr><th>事项</th><th>内容</th><th>优先级</th></tr></thead><tbody><tr><td>真实数据接入</td><td>客户 30-50 个 SKU 表、平台字段模板、成本/佣金/物流费用。</td><td>高</td></tr><tr><td>本地模型</td><td>接入 qwen2.5:7b/14b 替换模板化文案。</td><td>高</td></tr><tr><td>平台规则</td><td>补齐 Ozon/Kaspi 字段、类目、图片、条码规则。</td><td>高</td></tr><tr><td>通知与审批</td><td>Slack/飞书/Telegram 通知，上架前人工确认。</td><td>中</td></tr></tbody></table></section>
+</main>
+<script>
+function showMerchantApp(){document.getElementById('loginScreen').style.display='none';document.getElementById('merchantUi').style.display='grid'}
+function switchAppView(id,el){document.querySelectorAll('.app-view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.side-link').forEach(v=>v.classList.remove('active'));el.classList.add('active')}
+</script>
+</body>
+</html>
