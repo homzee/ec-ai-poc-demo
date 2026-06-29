@@ -54,17 +54,12 @@
   <p>面向中亚与俄语区电商的客户演示 Demo：把 1688 中文商品资料转换成 Ozon 上架辅助资料包，覆盖 SKU 利润测算、风险评分、俄语 Listing、图片合规、驳回处理、客服草稿、补货和调价建议。</p>
 </header>
 <nav>
-  <a href="#overview">总览</a><a href="#prototype">产品原型</a><a href="#discovery">选品挖掘</a><a href="#sku">SKU 分析</a><a href="#detail">详情页生成</a><a href="#ops">运营能力</a><a href="#workflow">业务流程</a><a href="#deploy">本地部署</a><a href="#todo">开发 To-do</a>
+  <a href="#overview">总览</a><a href="#prototype">产品原型</a><a href="#discovery">选品挖掘</a><a href="#sku">SKU 分析</a><a href="#detail">详情页生成</a><a href="#ops">运营能力</a><a href="#workflow">业务流程</a><a href="#handoff">项目交接</a><a href="#deploy">本地部署</a><a href="#todo">开发 To-do</a>
 </nav>
 <main>
   <section id="overview">
     <h2>Demo 总览</h2>
-    <div class="summary">
-      <div class="box"><b>5</b><span>示例 SKU</span></div>
-      <div class="box"><b>A: 3 / B: 2</b><span>评分分布</span></div>
-      <div class="box"><b>8 个</b><span>实际功能展示</span></div>
-      <div class="box"><b>本地优先</b><span>Ollama / Qwen 可接入</span></div>
-    </div>
+    <div id="overviewStats" class="summary" aria-live="polite"></div>
   </section>
   <section class="panel callout">
     <h2>演示定位</h2>
@@ -80,26 +75,97 @@
       <div id="merchantUi" class="merchant-ui">
         <aside class="sidebar"><h3>Merchant AI</h3><a class="side-link active" onclick="switchAppView('dashboard',this)">总览</a><a class="side-link" onclick="switchAppView('inventory',this)">库存</a><a class="side-link" onclick="switchAppView('store',this)">店铺</a><a class="side-link" onclick="switchAppView('ai',this)">AI 任务</a><a class="side-link" onclick="switchAppView('mobile',this)">手机端</a></aside>
         <div class="app-main">
-          <div id="dashboard" class="app-view active"><h2>Ozon 跨境店 · 演示工作台</h2><div class="kpi-grid"><div class="kpi"><b>5</b><span class="meta">在管 SKU</span></div><div class="kpi"><b>3</b><span class="meta">优先测试</span></div><div class="kpi"><b>2</b><span class="meta">需人工复核</span></div><div class="kpi"><b>1</b><span class="meta">待补货提醒</span></div></div></div>
-          <div id="inventory" class="app-view"><h2>库存管理</h2><table><tr><th>SKU</th><th>商品</th><th>库存</th><th>动作</th></tr><tr><td>BEAUTY-005-01</td><td>便携卷发棒</td><td>42</td><td>进入补货观察</td></tr><tr><td>HOME-001-02</td><td>厨房收纳架</td><td>118</td><td>继续测试</td></tr></table></div>
+          <div id="dashboard" class="app-view active"><h2>Ozon 跨境店 · 演示工作台</h2><div id="dashboardKpis" class="kpi-grid" aria-live="polite"></div></div>
+          <div id="inventory" class="app-view"><h2>库存管理</h2><table><thead><tr><th>SKU</th><th>商品</th><th>库存</th><th>动作</th></tr></thead><tbody id="inventoryRows"></tbody></table></div>
           <div id="store" class="app-view"><h2>店铺信息</h2><div class="grid"><div class="card"><h3>Ozon 跨境店</h3><p>状态：试运营；模式：r-FBS</p></div><div class="card"><h3>Kaspi</h3><p>状态：后续扩展；目标：哈萨克斯坦市场</p></div></div></div>
-          <div id="ai" class="app-view"><h2>AI 任务队列</h2><div class="grid"><div class="card"><h3>详情页生成</h3><p>5 个 SKU 已生成平台化字段包。</p></div><div class="card"><h3>驳回分析</h3><p>检测水印/文字风险，建议重新处理图片。</p></div></div></div>
-          <div id="mobile" class="app-view"><h2>手机端展示</h2><div class="card"><strong>今日库存提醒</strong><br><span class="meta">BEAUTY-005-01 进入补货观察</span></div><button onclick="location.href='#sku'">查看 SKU 列表</button></div>
+          <div id="ai" class="app-view"><h2>AI 任务队列</h2><div id="aiTaskCards" class="grid" aria-live="polite"></div></div>
+          <div id="mobile" class="app-view"><h2>手机端展示</h2><div id="mobileAlert" class="card" aria-live="polite"></div><button onclick="location.href='#sku'">查看 SKU 列表</button></div>
         </div>
       </div>
     </div>
   </section>
-  <section id="discovery"><h2>选品挖掘</h2><div class="grid"><article class="card"><div class="meta">Ozon · 家居收纳</div><h3>厨房多层收纳架</h3><p>抓取热销线索、评论痛点、供应链候选链接，输出机会评分和建议动作。</p><span class="pill">评论痛点</span><span class="pill">1688 匹配</span><span class="pill">机会评分 88</span></article><article class="card"><div class="meta">Kaspi · 美妆个护</div><h3>便携卷发棒</h3><p>匹配中亚市场价格带，结合成本、物流和佣金做利润测算。</p><span class="pill">高毛利</span><span class="pill">需图片合规</span></article></div></section>
-  <section id="sku"><h2>SKU 分析</h2><div class="grid"><article class="card"><h3>厨房收纳架</h3><div class="score grade-a">A / 91</div><p>建议优先测试；利润 620 RUB，利润率 31.4%。</p><p><strong>俄语标题：</strong>Кухонный органайзер многоуровневый</p></article><article class="card"><h3>便携卷发棒</h3><div class="score grade-b">B / 78</div><p>可测试但需复核图片合规；注意插头规格和售后风险。</p><p><strong>俄语标题：</strong>Портативная плойка для волос</p></article></div></section>
+  <section id="discovery"><h2>选品挖掘</h2><div id="discoveryCards" class="grid" aria-live="polite"></div></section>
+  <section id="sku"><h2>SKU 分析</h2><div id="skuCards" class="grid" aria-live="polite"></div></section>
   <section id="detail"><h2>详情页生成</h2><div class="two-col"><div class="panel"><h3>平台字段包</h3><p>标题、短描述、长描述、Rich-content 区块、属性字段、图片顺序、条码规则。</p></div><div class="panel"><h3>自检规则</h3><p>检查俄语标题长度、禁用词、图片水印、主图背景、尺寸和类目属性完整度。</p></div></div></section>
   <section id="ops"><h2>运营能力</h2><div class="grid"><article class="card"><h3>驳回处理</h3><p>识别俄语驳回原因，定位后台板块并给出修改建议。</p></article><article class="card"><h3>客服草稿</h3><p>俄语买家消息分类、回复草稿、是否转人工判断。</p></article><article class="card"><h3>海外仓补货</h3><p>按库存、日销、可售天数输出补货建议。</p></article><article class="card"><h3>智能定价</h3><p>结合竞品价、保底价和人工确认规则输出建议价。</p></article></div></section>
   <section id="workflow"><h2>业务流程</h2><div class="grid"><div class="step"><h3>1. 商品资料</h3><p>1688/义乌购/客户表格输入。</p></div><div class="step"><h3>2. AI 分析</h3><p>利润、风险、Listing、合规检查。</p></div><div class="step"><h3>3. 人工审核</h3><p>关键动作保留人工确认。</p></div><div class="step"><h3>4. 平台执行</h3><p>后续可接 Ozon/Kaspi API。</p></div></div></section>
+
+  <section id="handoff">
+    <h2>项目交接与继续开发</h2>
+    <div class="two-col">
+      <div class="panel">
+        <h3>当前可演示内容</h3>
+        <p>静态页已经覆盖客户会看到的核心闭环：登录工作台、库存/店铺/AI 任务切换、选品线索、SKU 评分、俄语 Listing、合规检查和运营建议。</p>
+        <span class="pill">可直接发客户预览</span><span class="pill">GitHub Pages</span><span class="pill">本地静态服务</span>
+      </div>
+      <div class="panel">
+        <h3>下一步开发顺序</h3>
+        <p>优先把客户真实 SKU 表导入为统一 JSON/CSV 数据源，再把页面中的示例卡片改为数据驱动；随后接入本地 Qwen/Ollama 生成 Listing，并保留人工审核入口。</p>
+        <span class="pill">数据源优先</span><span class="pill">AI 生成</span><span class="pill">人工审批</span>
+      </div>
+    </div>
+  </section>
   <section id="deploy"><h2>本地部署</h2><div class="panel"><p><strong>本地 Demo：</strong>Python 静态服务，默认端口 8765。</p><p><strong>后续扩展：</strong>Ollama/Qwen 本地模型、Qdrant/Chroma 知识库、n8n 编排、Slack/飞书/Telegram 通知。</p></div></section>
   <section id="todo"><h2>开发 To-do</h2><table><thead><tr><th>事项</th><th>内容</th><th>优先级</th></tr></thead><tbody><tr><td>真实数据接入</td><td>客户 30-50 个 SKU 表、平台字段模板、成本/佣金/物流费用。</td><td>高</td></tr><tr><td>本地模型</td><td>接入 qwen2.5:7b/14b 替换模板化文案。</td><td>高</td></tr><tr><td>平台规则</td><td>补齐 Ozon/Kaspi 字段、类目、图片、条码规则。</td><td>高</td></tr><tr><td>通知与审批</td><td>Slack/飞书/Telegram 通知，上架前人工确认。</td><td>中</td></tr></tbody></table></section>
 </main>
 <script>
 function showMerchantApp(){document.getElementById('loginScreen').style.display='none';document.getElementById('merchantUi').style.display='grid'}
 function switchAppView(id,el){document.querySelectorAll('.app-view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.side-link').forEach(v=>v.classList.remove('active'));el.classList.add('active')}
+
+const fallbackSkus = [
+  {sku:'HOME-001-02',name:'厨房多层收纳架',platform:'Ozon',category:'家居收纳',grade:'A',score:91,profitRub:620,profitRate:31.4,stock:118,dailySales:5,action:'继续测试',priority:'优先测试',russianTitle:'Кухонный органайзер многоуровневый',summary:'抓取热销线索、评论痛点、供应链候选链接，输出机会评分和建议动作。',tags:['评论痛点','1688 匹配','机会评分 88']},
+  {sku:'BEAUTY-005-01',name:'便携卷发棒',platform:'Kaspi',category:'美妆个护',grade:'B',score:78,profitRub:410,profitRate:27.8,stock:42,dailySales:4,action:'进入补货观察',priority:'需人工复核',russianTitle:'Портативная плойка для волос',summary:'匹配中亚市场价格带，结合成本、物流和佣金做利润测算。',tags:['高毛利','需图片合规','插头规格复核']}
+];
+
+function escapeHtml(value){return String(value).replace(/[&<>'"]/g,(char)=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]))}
+function gradeClass(grade){return `grade-${String(grade).toLowerCase()}`}
+function countBy(items,key){return items.reduce((acc,item)=>{const value=item[key]||'未标记';acc[value]=(acc[value]||0)+1;return acc},{})}
+function renderPills(tags){return (tags||[]).map((tag)=>`<span class="pill">${escapeHtml(tag)}</span>`).join('')}
+function renderStats(skus){
+  const gradeSummary=Object.entries(countBy(skus,'grade')).map(([grade,count])=>`${grade}: ${count}`).join(' / ');
+  const reviewCount=skus.filter((sku)=>sku.priority==='需人工复核').length;
+  document.getElementById('overviewStats').innerHTML=`
+    <div class="box"><b>${skus.length}</b><span>示例 SKU</span></div>
+    <div class="box"><b>${escapeHtml(gradeSummary)}</b><span>评分分布</span></div>
+    <div class="box"><b>${reviewCount}</b><span>需人工复核</span></div>
+    <div class="box"><b>本地优先</b><span>Ollama / Qwen 可接入</span></div>`;
+  document.getElementById('dashboardKpis').innerHTML=`
+    <div class="kpi"><b>${skus.length}</b><span class="meta">在管 SKU</span></div>
+    <div class="kpi"><b>${skus.filter((sku)=>sku.priority==='优先测试').length}</b><span class="meta">优先测试</span></div>
+    <div class="kpi"><b>${reviewCount}</b><span class="meta">需人工复核</span></div>
+    <div class="kpi"><b>${skus.filter((sku)=>sku.action.includes('补货')).length}</b><span class="meta">补货/库存提醒</span></div>`;
+}
+function renderInventory(skus){
+  document.getElementById('inventoryRows').innerHTML=skus.map((sku)=>`<tr><td>${escapeHtml(sku.sku)}</td><td>${escapeHtml(sku.name)}</td><td>${sku.stock}</td><td>${escapeHtml(sku.action)}</td></tr>`).join('');
+}
+function renderDiscovery(skus){
+  document.getElementById('discoveryCards').innerHTML=skus.slice(0,4).map((sku)=>`<article class="card"><div class="meta">${escapeHtml(sku.platform)} · ${escapeHtml(sku.category)}</div><h3>${escapeHtml(sku.name)}</h3><p>${escapeHtml(sku.summary)}</p>${renderPills(sku.tags)}</article>`).join('');
+}
+function renderSkuCards(skus){
+  document.getElementById('skuCards').innerHTML=skus.map((sku)=>`<article class="card"><h3>${escapeHtml(sku.name)}</h3><div class="score ${gradeClass(sku.grade)}">${escapeHtml(sku.grade)} / ${sku.score}</div><p>${escapeHtml(sku.priority)}；利润 ${sku.profitRub} RUB，利润率 ${sku.profitRate}%。</p><p><strong>俄语标题：</strong>${escapeHtml(sku.russianTitle)}</p></article>`).join('');
+}
+function renderAiTasks(skus){
+  const reviewItems=skus.filter((sku)=>sku.priority==='需人工复核').map((sku)=>sku.name).join('、') || '暂无';
+  document.getElementById('aiTaskCards').innerHTML=`
+    <div class="card"><h3>详情页生成</h3><p>${skus.length} 个 SKU 已生成平台化字段包。</p></div>
+    <div class="card"><h3>驳回分析</h3><p>${escapeHtml(reviewItems)} 需要重点检查图片、认证或规格风险。</p></div>`;
+}
+function renderMobileAlert(skus){
+  const alertSku=[...skus].sort((a,b)=>(a.stock/a.dailySales)-(b.stock/b.dailySales))[0];
+  document.getElementById('mobileAlert').innerHTML=`<strong>今日库存提醒</strong><br><span class="meta">${escapeHtml(alertSku.sku)} ${escapeHtml(alertSku.action)}，预计可售 ${Math.round(alertSku.stock/alertSku.dailySales)} 天</span>`;
+}
+function renderDemo(skus){renderStats(skus);renderInventory(skus);renderDiscovery(skus);renderSkuCards(skus);renderAiTasks(skus);renderMobileAlert(skus)}
+async function loadSkuData(){
+  try{
+    const response=await fetch('data/skus.json');
+    if(!response.ok) throw new Error(`HTTP ${response.status}`);
+    renderDemo(await response.json());
+  }catch(error){
+    console.warn('使用内置 SKU 示例数据，原因：',error);
+    renderDemo(fallbackSkus);
+  }
+}
+loadSkuData();
 </script>
 </body>
 </html>
